@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Icons\logo.ico" />
+    <None Remove="Assets\Images\backspace.png" />
+    <None Remove="Assets\Images\menu.png" />
+    <None Remove="Assets\Images\reload.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Icons\logo.ico" />
+    <Resource Include="Assets\Images\backspace.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Images\menu.png" />
+    <Resource Include="Assets\Images\reload.png" />
+  </ItemGroup>
+
+</Project>
