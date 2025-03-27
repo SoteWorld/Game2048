@@ -77,6 +77,10 @@
             <Border Style="{StaticResource InfoTabStyle}" Grid.Row="1" Grid.Column="3">
                 <TextBlock Style="{StaticResource InfoTabLabelStyle}" Text="{Binding Score, StringFormat='Score: {0}'}"></TextBlock>
             </Border>
+            <Border Style="{StaticResource InfoTabStyle}" Grid.Row="1" Grid.Column="2">
+                <TextBlock Style="{StaticResource InfoTabLabelStyle}" 
+               Text="{Binding ElapsedTime, StringFormat='Time: {0:hh\\:mm\\:ss}'}" />
+            </Border>
         </Grid>
 
         <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource BoardBorderStyle}">
