@@ -10,7 +10,7 @@
         Height="500" Width="500"
         MinWidth="450" MinHeight="500"
         Background="{StaticResource BackgroundColor}">
-    <Frame x:Name="MainWindowFrame" NavigationUIVisibility="Hidden" Source="../Pages/MenuPage.xaml" />
+    <Frame x:Name="MainWindowFrame" NavigationUIVisibility="Hidden" Source="../Pages/LoginPage.xaml" />
 </Window>
 
 

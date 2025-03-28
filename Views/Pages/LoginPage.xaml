@@ -1,0 +1,56 @@
+﻿<Page x:Class="Game2048.View.Pages.LoginPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:vm="clr-namespace:Game2048.ViewModels"
+      Title="LoginPage">
+
+    <!-- Устанавливаем DataContext для привязки данных -->
+    <Page.DataContext>
+        <vm:LoginViewModel />
+    </Page.DataContext>
+
+    <!-- Основной контейнер с фоном из стиля App.xaml -->
+    <Grid Background="{StaticResource BackgroundColor}">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
+
+            <!-- Заголовок страницы -->
+            <Label Content="Login" 
+             FontSize="24" 
+             HorizontalAlignment="Center" 
+             Margin="0,0,0,10" 
+             Style="{StaticResource LabelStyle}" />
+
+            <!-- Поле ввода логина с подсказкой -->
+            <TextBox Margin="0,10" 
+               Height="30"
+               Style="{StaticResource WatermarkTextBoxStyle}"
+               Tag="Username"
+               Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
+               ToolTip="Введите ваше имя пользователя" />
+
+            <!-- Поле ввода пароля (теперь обычный TextBox) с подсказкой -->
+            <TextBox Margin="0,10" 
+               Height="30"
+               Style="{StaticResource WatermarkTextBoxStyle}"
+               Tag="Password"
+               Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" 
+               ToolTip="Введите ваш пароль" />
+
+            <!-- Кнопка входа -->
+            <Button Content="Login" 
+              Height="35" 
+              Margin="0,10"
+              Command="{Binding LoginCommand}"
+              Style="{StaticResource MenuButtonStyle}"
+              ToolTip="Нажмите, чтобы войти в систему" />
+
+            <!-- Ссылка для перехода на страницу регистрации, реализованная через Hyperlink -->
+            <TextBlock HorizontalAlignment="Center">
+        <Hyperlink Click="OnRegisterClick" ToolTip="Перейти на страницу регистрации">
+          No account? Register here.
+        </Hyperlink>
+            </TextBlock>
+
+        </StackPanel>
+    </Grid>
+</Page>

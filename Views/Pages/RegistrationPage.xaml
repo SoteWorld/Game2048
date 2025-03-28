@@ -1,0 +1,64 @@
+﻿<Page x:Class="Game2048.View.Pages.RegistrationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:vm="clr-namespace:Game2048.ViewModels"
+      Title="RegistrationPage">
+
+    <!-- Устанавливаем DataContext для привязки данных -->
+    <Page.DataContext>
+        <vm:RegistrationViewModel />
+    </Page.DataContext>
+
+    <!-- Основной контейнер с фоном из App.xaml -->
+    <Grid Background="{StaticResource BackgroundColor}">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
+
+            <!-- Заголовок страницы регистрации -->
+            <Label Content="Register" 
+             FontSize="24" 
+             HorizontalAlignment="Center" 
+             Margin="0,0,0,10" 
+             Style="{StaticResource LabelStyle}" />
+
+            <!-- Поле ввода логина с подсказкой -->
+            <TextBox Margin="0,10" 
+               Height="30"
+               Style="{StaticResource WatermarkTextBoxStyle}"
+               Tag="Username"
+               Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
+               ToolTip="Введите ваше имя пользователя" />
+
+            <!-- Поле ввода пароля с подсказкой -->
+            <TextBox Margin="0,10" 
+               Height="30"
+               Style="{StaticResource WatermarkTextBoxStyle}"
+               Tag="Password"
+               Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
+               ToolTip="Введите ваш пароль" />
+
+            <!-- Поле ввода подтверждения пароля с подсказкой -->
+            <TextBox Margin="0,10" 
+               Height="30"
+               Style="{StaticResource WatermarkTextBoxStyle}"
+               Tag="Confirm Password"
+               Text="{Binding ConfirmPassword, UpdateSourceTrigger=PropertyChanged}"
+               ToolTip="Подтвердите ваш пароль" />
+
+            <!-- Кнопка регистрации -->
+            <Button Content="Register" 
+              Height="35" 
+              Margin="0,10"
+              Command="{Binding RegisterCommand}"
+              Style="{StaticResource MenuButtonStyle}"
+              ToolTip="Нажмите, чтобы зарегистрироваться" />
+
+            <!-- Ссылка для перехода на страницу входа -->
+            <TextBlock HorizontalAlignment="Center">
+        <Hyperlink Click="OnLoginClick" ToolTip="Перейти на страницу входа">
+          Already have an account? Login here.
+        </Hyperlink>
+            </TextBlock>
+
+        </StackPanel>
+    </Grid>
+</Page>

@@ -170,5 +170,43 @@
             <Setter Property="FontSize" Value="16"/>
         </Style>
 
+        <Style x:Key="WatermarkTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <!-- Цвет текста — белый -->
+            <Setter Property="Foreground" Value="White"/>
+            <!-- Выравнивание по центру -->
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <!-- Основное содержимое TextBox -->
+                            <ScrollViewer x:Name="PART_ContentHost" Background="Transparent" />
+                            <!-- Подсказка, текст берётся из свойства Tag -->
+                            <TextBlock x:Name="Watermark"
+                     Text="{TemplateBinding Tag}"
+                     Foreground="LightGray"
+                     Margin="5,0,0,0"
+                     VerticalAlignment="Center"
+                     IsHitTestVisible="False"
+                     Visibility="Collapsed"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <!-- Если поле пустое или равно null – показываем подсказку -->
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+
     </Application.Resources>
 </Application>

@@ -16,6 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="3.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Assets\Icons\logo.ico" />
     <Resource Include="Assets\Images\backspace.png" />
   </ItemGroup>
