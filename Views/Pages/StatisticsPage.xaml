@@ -46,26 +46,47 @@
             <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource LabelStyle}" Content="{StaticResource StatisticsText}" />
         </Grid>
         <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource TableBoardBorderStyle}">
-            <DataGrid ItemsSource="{Binding StatisticsCollection}" Style="{StaticResource StatisticsTableStyle}">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Width="*" Header="Player" Binding="{Binding Name}">
-                        <DataGridTextColumn.HeaderStyle>
-                            <StaticResource ResourceKey="StatisticsTableHeaderStyle"/>
-                        </DataGridTextColumn.HeaderStyle>
-                        <DataGridTextColumn.ElementStyle>
-                            <StaticResource ResourceKey="StatisticsTableRowStyle" />
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Width="*" Header="Best score" Binding="{Binding Score}">
-                        <DataGridTextColumn.HeaderStyle>
-                            <StaticResource ResourceKey="StatisticsTableHeaderStyle"/>
-                        </DataGridTextColumn.HeaderStyle>
-                        <DataGridTextColumn.ElementStyle>
-                            <StaticResource ResourceKey="StatisticsTableRowStyle" />
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Border>
+    <DataGrid ItemsSource="{Binding Users}" Style="{StaticResource StatisticsTableStyle}">
+        <DataGrid.Columns>
+            <!-- Имя пользователя -->
+            <DataGridTextColumn Width="*" Header="Player" Binding="{Binding Username}">
+                <DataGridTextColumn.HeaderStyle>
+                    <StaticResource ResourceKey="StatisticsTableHeaderStyle"/>
+                </DataGridTextColumn.HeaderStyle>
+                <DataGridTextColumn.ElementStyle>
+                    <StaticResource ResourceKey="StatisticsTableRowStyle" />
+                </DataGridTextColumn.ElementStyle>
+            </DataGridTextColumn>
+            <!-- Лучший счет -->
+            <DataGridTextColumn Width="*" Header="Score" Binding="{Binding MaxScore}">
+                <DataGridTextColumn.HeaderStyle>
+                    <StaticResource ResourceKey="StatisticsTableHeaderStyle"/>
+                </DataGridTextColumn.HeaderStyle>
+                <DataGridTextColumn.ElementStyle>
+                    <StaticResource ResourceKey="StatisticsTableRowStyle" />
+                </DataGridTextColumn.ElementStyle>
+            </DataGridTextColumn>
+            <!-- Количество сыгранных игр -->
+            <DataGridTextColumn Width="*" Header="Games" Binding="{Binding GamesPlayed}">
+                <DataGridTextColumn.HeaderStyle>
+                    <StaticResource ResourceKey="StatisticsTableHeaderStyle"/>
+                </DataGridTextColumn.HeaderStyle>
+                <DataGridTextColumn.ElementStyle>
+                    <StaticResource ResourceKey="StatisticsTableRowStyle" />
+                </DataGridTextColumn.ElementStyle>
+            </DataGridTextColumn>
+            <!-- Общее время игры (форматируется конвертером) -->
+            <DataGridTextColumn Width="*" Header="Time" Binding="{Binding TotalPlayTimeInSeconds, Converter={StaticResource SecondsToTimeConverter}}">
+                <DataGridTextColumn.HeaderStyle>
+                    <StaticResource ResourceKey="StatisticsTableHeaderStyle"/>
+                </DataGridTextColumn.HeaderStyle>
+                <DataGridTextColumn.ElementStyle>
+                    <StaticResource ResourceKey="StatisticsTableRowStyle" />
+                </DataGridTextColumn.ElementStyle>
+            </DataGridTextColumn>
+        </DataGrid.Columns>
+    </DataGrid>
+</Border>
+
     </Grid>
 </Page>

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Threading;
 using Game2048.Commands;
-using Game2048.Data;
 using Game2048.Models;
+using Game2048.Repositories;
 using Game2048.ViewModels.Base;
 
 namespace Game2048.ViewModels
@@ -15,6 +14,8 @@ namespace Game2048.ViewModels
         private readonly Random random;       // Генератор случайных чисел для создания новых плиток
         private DispatcherTimer gameTimer;    // Таймер для отслеживания времени игры
         private TimeSpan elapsedTime;         // Поле для хранения прошедшего времени
+        private DateTime gameStartTime;
+
 
         // Свойство, предоставляющее игровое поле для UI
         public int[,] Board { get => gameBoard.board; private set => Set(ref gameBoard.board, value); }
@@ -65,6 +66,7 @@ namespace Game2048.ViewModels
             Board = new int[gameBoard.boardSize, gameBoard.boardSize];
             Score = 0;
             ElapsedTime = TimeSpan.Zero; // сбрасываем таймер
+            gameStartTime = DateTime.Now; // фиксируем время начала игры
             gameTimer.Start();           // запускаем таймер
             GenerateRandomNumber();
             GenerateRandomNumber();
@@ -98,19 +100,19 @@ namespace Game2048.ViewModels
             Update();
             if (IsGameOver())
             {
-                MessageBoxResult result = MessageBox.Show("Вы проиграли! Желаете занести себя в список?", "Конец", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                MessageBoxResult result = MessageBox.Show("Вы проиграли! Желаете сохранить статистику?", "Конец", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (result == MessageBoxResult.Yes)
                 {
-                    AddToStatistics();
+                    UpdateStatistics();
                 }
                 Reset();
             }
             else if (IsGameWin())
             {
-                MessageBoxResult result = MessageBox.Show("Вы выиграли! Желаете занести себя в список?", "Конец", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                MessageBoxResult result = MessageBox.Show("Вы выиграли! Желаете сохранить статистику?", "Конец", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (result == MessageBoxResult.Yes)
                 {
-                    AddToStatistics();
+                    UpdateStatistics();
                 }
                 Reset();
             }
@@ -159,19 +161,26 @@ namespace Game2048.ViewModels
         #endregion
 
         #region Статистика
-        private void AddToStatistics()
+        // Метод UpdateStatistics обновляет статистику текущего пользователя в базе данных с помощью MongoDB
+        private void UpdateStatistics()
         {
-            string name;
-            do
+            if (UserSession.CurrentUser != null)
             {
-                name = Microsoft.VisualBasic.Interaction.InputBox("Введите ваше имя: ", "Ввод имени", "");
-                if (string.IsNullOrEmpty(name))
-                {
-                    MessageBox.Show("Имя не может быть пустым. Пожалуйста, введите ваше имя!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            } while (string.IsNullOrEmpty(name));
+                // Вычисляем продолжительность игры в секундах
+                long gameDurationInSeconds = (long)(DateTime.Now - gameStartTime).TotalSeconds;
+                int currentScore = Score; // текущий счет игры
 
-            Statistics.Add(name, Score.ToString());
+                var repo = new UserRepository();
+                repo.IncrementUserStats(UserSession.CurrentUser.Id, currentScore, gameDurationInSeconds);
+
+                // Обновляем объект сессии для отображения (если требуется)
+                UserSession.CurrentUser.GamesPlayed += 1;
+                UserSession.CurrentUser.TotalPlayTimeInSeconds += gameDurationInSeconds;
+                if (currentScore > UserSession.CurrentUser.MaxScore)
+                {
+                    UserSession.CurrentUser.MaxScore = currentScore;
+                }
+            }
         }
         #endregion
 

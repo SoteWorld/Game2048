@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Game2048"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:conv="clr-namespace:Game2048.Converters"
              StartupUri="Views/Windows/MainWindow.xaml">
     <Application.Resources>
         
@@ -22,6 +23,8 @@
         <sys:Double x:Key="CellSize">80</sys:Double>
         <sys:Double x:Key="TableBorderWidth">400</sys:Double>
         <sys:Double x:Key="TableBorderHeight">350</sys:Double>
+
+        <conv:SecondsToTimeConverter x:Key="SecondsToTimeConverter" />
 
         <Style x:Key="MenuButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="MaxWidth" Value="300" />
