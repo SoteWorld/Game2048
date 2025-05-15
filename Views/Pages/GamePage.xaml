@@ -3,10 +3,14 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:ei="http://schemas.microsoft.com/xaml/behaviors"
+
       xmlns:vm="clr-namespace:Game2048.ViewModels"
       xmlns:cnv="clr-namespace:Game2048.Converters"
-      mc:Ignorable="d"
-      Focusable="True">
+      xmlns:models="clr-namespace:Game2048.Models"
+
+      mc:Ignorable="d" Focusable="True">
 
     <Page.DataContext>
         <vm:GameViewModel />
@@ -83,8 +87,101 @@
             </Border>
         </Grid>
 
-        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource BoardBorderStyle}">
+        <Border Width="350" Height="350" Grid.Row="1" Grid.Column="1" Style="{StaticResource BoardBorderStyle}">
+            <!--
             <ItemsControl ItemsSource="{Binding Board, Converter={StaticResource IntToCollectionConverter}}" ItemTemplate="{DynamicResource BoardTemplate}" />
+            -->
+            <ItemsControl ItemsSource="{Binding Tiles}">
+                <!-- Панель размещения элементов: сетка 4x4 -->
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <!-- Привязка позиций плиток к сетке через свойства Row/Col -->
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Grid.Row" Value="{Binding Row}" />
+                        <Setter Property="Grid.Column" Value="{Binding Col}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+
+                <!-- Шаблон отображения плитки -->
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:Tile}">
+                        <Grid x:Name="root" RenderTransformOrigin="0.5,0.5">
+                            <Grid.RenderTransform>
+                                <ScaleTransform x:Name="scaleTransform" ScaleX="1" ScaleY="1" />
+                            </Grid.RenderTransform>
+
+                            <!-- Обёртка для корректной работы FluidMoveBehavior -->
+                            <ContentControl Tag="{Binding}">
+                                <Border Style="{StaticResource CellBorderStyle}"
+                        Background="{Binding Value, Converter={StaticResource ValueToColorConverter}}">
+                                    <TextBlock Style="{StaticResource CellLabelStyle}"
+                               Text="{Binding Value}" TextAlignment="Center"/>
+                                </Border>
+                            </ContentControl>
+                        </Grid>
+
+                        <!-- ⬇️ ВАЖНО: этот блок — не внутри Grid, а на том же уровне, что и он -->
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsNew}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard RepeatBehavior="1x" FillBehavior="Stop">
+                                            <DoubleAnimation Storyboard.TargetName="scaleTransform"
+                                             Storyboard.TargetProperty="ScaleX"
+                                             From="0" To="1" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="scaleTransform"
+                                             Storyboard.TargetProperty="ScaleY"
+                                             From="0" To="1" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding IsMerged}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard RepeatBehavior="1x" FillBehavior="Stop">
+                                            <DoubleAnimation Storyboard.TargetName="scaleTransform"
+                                             Storyboard.TargetProperty="ScaleX"
+                                             To="1.2" Duration="0:0:0.1" AutoReverse="True"/>
+                                            <DoubleAnimation Storyboard.TargetName="scaleTransform"
+                                             Storyboard.TargetProperty="ScaleY"
+                                             To="1.2" Duration="0:0:0.1" AutoReverse="True"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+                <!-- Анимация перемещения -->
+                <i:Interaction.Behaviors>
+                    <ei:FluidMoveBehavior AppliesTo="Children"
+                              Duration="0:0:1"
+                              FloatAbove="True"
+                              InitialTag="DataContext" />
+                </i:Interaction.Behaviors>
+            </ItemsControl>
+
         </Border>
     </Grid>
 </Page>

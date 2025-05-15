@@ -44,12 +44,20 @@ namespace Game2048.Converters
         // Преобразует значение в цвет
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // Если значение есть в словаре — возвращаем соответствующий цвет, иначе — тёмный фон
-            if (tileBrushes.TryGetValue(value as string, out Brush brush))
+            string key;
+            if (value is int intVal)
+                key = intVal.ToString();
+            else if (value is string strVal)
+                key = strVal;
+            else
+                return tileEmptyBrush;
+
+            if (tileBrushes.TryGetValue(key, out Brush brush))
                 return brush;
             else
                 return tileEmptyBrush;
         }
+
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

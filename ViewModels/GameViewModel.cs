@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Threading;
 using Game2048.Commands;
 using Game2048.Models;
@@ -15,6 +16,8 @@ namespace Game2048.ViewModels
         private DispatcherTimer gameTimer;    // Таймер для отслеживания времени игры
         private TimeSpan elapsedTime;         // Поле для хранения прошедшего времени
         private DateTime gameStartTime;
+        private Tile[,] tileBoard;               // матрица ссылок на Tile для отслеживания позиций
+        public ObservableCollection<Tile> Tiles { get; } = new();
 
 
         // Свойство, предоставляющее игровое поле для UI
@@ -28,6 +31,8 @@ namespace Game2048.ViewModels
         {
             gameBoard = new GameBoard();
             random = new Random();
+            tileBoard = new Tile[gameBoard.boardSize, gameBoard.boardSize];
+
 
             // Инициализация таймера: обновляем каждую секунду
             gameTimer = new DispatcherTimer();
@@ -64,6 +69,8 @@ namespace Game2048.ViewModels
         private void Reset()
         {
             Board = new int[gameBoard.boardSize, gameBoard.boardSize];
+            tileBoard = new Tile[gameBoard.boardSize, gameBoard.boardSize];
+            Tiles.Clear();
             Score = 0;
             ElapsedTime = TimeSpan.Zero; // сбрасываем таймер
             gameStartTime = DateTime.Now; // фиксируем время начала игры
@@ -83,7 +90,12 @@ namespace Game2048.ViewModels
                 col = random.Next(gameBoard.boardSize);
             } while (gameBoard.board[row, col] != 0);
 
-            gameBoard.board[row, col] = random.Next(100) < 90 ? 2 : 4;
+            int newValue = random.Next(100) < 90 ? 2 : 4;
+            gameBoard.board[row, col] = newValue;
+            // Создаем модель новой плитки и добавляем в коллекцию
+            var newTile = new Tile { Row = row, Col = col, Value = newValue, IsNew = true, IsMerged = false };
+            tileBoard[row, col] = newTile;
+            Tiles.Add(newTile);
         }
 
         // Обновляет отображаемые данные: поле и счёт
@@ -188,6 +200,13 @@ namespace Game2048.ViewModels
         public void ShiftLeft()
         {
             bool shifted = false;
+            // Сброс флагов анимации перед ходом
+            foreach (var t in Tiles)
+            {
+                t.IsNew = false;
+                t.IsMerged = false;
+            }
+
             for (int i = 0; i < gameBoard.board.GetLength(0); i++)
             {
                 int index = 0;
@@ -197,17 +216,34 @@ namespace Game2048.ViewModels
                     {
                         if (index > 0 && gameBoard.board[i, index - 1] == gameBoard.board[i, j])
                         {
+                            // Объединение плиток
                             gameBoard.board[i, index - 1] *= 2;
                             gameBoard.board[i, j] = 0;
                             shifted = true;
                             gameBoard.score += gameBoard.board[i, index - 1];
+                            // Обновляем модели: удаляем исходную плитку, удваиваем значение целевой
+                            Tile tileToRemove = tileBoard[i, j];
+                            Tile tileMergedInto = tileBoard[i, index - 1];
+                            Tiles.Remove(tileToRemove);
+                            tileBoard[i, j] = null;
+                            tileMergedInto.Value = gameBoard.board[i, index - 1];
+                            tileMergedInto.IsMerged = true;
                         }
                         else
                         {
                             if (j != index)
                             {
+                                // Перемещение плитки
                                 gameBoard.board[i, index] = gameBoard.board[i, j];
                                 gameBoard.board[i, j] = 0;
+                                tileBoard[i, index] = tileBoard[i, j];
+                                tileBoard[i, j] = null;
+                                // Обновляем координаты перемещенной плитки (для анимации)
+                                if (tileBoard[i, index] != null)
+                                {
+                                    tileBoard[i, index].Row = i;
+                                    tileBoard[i, index].Col = index;
+                                }
                                 shifted = true;
                             }
                             index++;
@@ -225,6 +261,8 @@ namespace Game2048.ViewModels
         public void ShiftRight()
         {
             bool shifted = false;
+            foreach (var t in Tiles) { t.IsNew = false; t.IsMerged = false; }
+
             for (int i = 0; i < gameBoard.board.GetLength(0); i++)
             {
                 int index = gameBoard.board.GetLength(1) - 1;
@@ -234,18 +272,34 @@ namespace Game2048.ViewModels
                     {
                         if (index < gameBoard.board.GetLength(1) - 1 && gameBoard.board[i, index + 1] == gameBoard.board[i, j])
                         {
+                            // Объединение вправо
                             gameBoard.board[i, index + 1] *= 2;
                             gameBoard.board[i, j] = 0;
                             shifted = true;
                             gameBoard.score += gameBoard.board[i, index + 1];
+                            Tile tileToRemove = tileBoard[i, j];
+                            Tile tileMergedInto = tileBoard[i, index + 1];
+                            Tiles.Remove(tileToRemove);
+                            tileBoard[i, j] = null;
+                            tileMergedInto.Value = gameBoard.board[i, index + 1];
+                            tileMergedInto.IsMerged = true;
                         }
                         else
                         {
                             if (j != index)
                             {
+                                // Перемещение вправо
                                 gameBoard.board[i, index] = gameBoard.board[i, j];
                                 gameBoard.board[i, j] = 0;
+                                tileBoard[i, index] = tileBoard[i, j];
+                                tileBoard[i, j] = null;
+                                if (tileBoard[i, index] != null)
+                                {
+                                    tileBoard[i, index].Row = i;
+                                    tileBoard[i, index].Col = index;
+                                }
                                 shifted = true;
+
                             }
                             index--;
                         }
@@ -262,6 +316,8 @@ namespace Game2048.ViewModels
         public void ShiftDown()
         {
             bool shifted = false;
+            foreach (var t in Tiles) { t.IsNew = false; t.IsMerged = false; }
+
             for (int j = 0; j < gameBoard.board.GetLength(1); j++)
             {
                 int index = gameBoard.board.GetLength(0) - 1;
@@ -271,17 +327,32 @@ namespace Game2048.ViewModels
                     {
                         if (index < gameBoard.board.GetLength(0) - 1 && gameBoard.board[index + 1, j] == gameBoard.board[i, j])
                         {
+                            // Объединение вниз
                             gameBoard.board[index + 1, j] *= 2;
                             gameBoard.board[i, j] = 0;
                             shifted = true;
                             gameBoard.score += gameBoard.board[index + 1, j];
+                            Tile tileToRemove = tileBoard[i, j];
+                            Tile tileMergedInto = tileBoard[index + 1, j];
+                            Tiles.Remove(tileToRemove);
+                            tileBoard[i, j] = null;
+                            tileMergedInto.Value = gameBoard.board[index + 1, j];
+                            tileMergedInto.IsMerged = true;
                         }
                         else
                         {
                             if (i != index)
                             {
+                                // Перемещение вниз
                                 gameBoard.board[index, j] = gameBoard.board[i, j];
                                 gameBoard.board[i, j] = 0;
+                                tileBoard[index, j] = tileBoard[i, j];
+                                tileBoard[i, j] = null;
+                                if (tileBoard[index, j] != null)
+                                {
+                                    tileBoard[index, j].Row = index;
+                                    tileBoard[index, j].Col = j;
+                                }
                                 shifted = true;
                             }
                             index--;
@@ -299,6 +370,8 @@ namespace Game2048.ViewModels
         public void ShiftUp()
         {
             bool shifted = false;
+            foreach (var t in Tiles) { t.IsNew = false; t.IsMerged = false; }
+
             for (int j = 0; j < gameBoard.board.GetLength(1); j++)
             {
                 int index = 0;
@@ -308,17 +381,32 @@ namespace Game2048.ViewModels
                     {
                         if (index > 0 && gameBoard.board[index - 1, j] == gameBoard.board[i, j])
                         {
+                            // Объединение вверх
                             gameBoard.board[index - 1, j] *= 2;
                             gameBoard.board[i, j] = 0;
                             shifted = true;
                             gameBoard.score += gameBoard.board[index - 1, j];
+                            Tile tileToRemove = tileBoard[i, j];
+                            Tile tileMergedInto = tileBoard[index - 1, j];
+                            Tiles.Remove(tileToRemove);
+                            tileBoard[i, j] = null;
+                            tileMergedInto.Value = gameBoard.board[index - 1, j];
+                            tileMergedInto.IsMerged = true;
                         }
                         else
                         {
                             if (i != index)
                             {
+                                // Перемещение вверх
                                 gameBoard.board[index, j] = gameBoard.board[i, j];
                                 gameBoard.board[i, j] = 0;
+                                tileBoard[index, j] = tileBoard[i, j];
+                                tileBoard[i, j] = null;
+                                if (tileBoard[index, j] != null)
+                                {
+                                    tileBoard[index, j].Row = index;
+                                    tileBoard[index, j].Col = j;
+                                }
                                 shifted = true;
                             }
                             index++;
