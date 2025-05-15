@@ -35,22 +35,23 @@
 ---
 
 ## Структура проекта
-Game2048/
-├─ Assets/ # Ресурсы интерфейса (иконки, изображения)
-├─ Commands/ # Реализации команд (RelayCommand, NavigationCommand и т.д.)
-│ └─ Base/ # Базовый класс BaseCommand
-├─ Converters/ # Конвертеры для привязки в XAML
-├─ Models/ # Модели предметной области (GameBoard, Tile, UserProfile и др.)
-├─ Repositories/ # Слой доступа к данным (UserRepository для MongoDB)
-├─ ViewModels/ # Модели представления (MenuViewModel, GameViewModel и др.)
-│ └─ Base/ # Базовый ViewModel с INotifyPropertyChanged
-├─ Views/ # XAML-страницы и окна (Pages/, Windows/)
-│ ├─ Pages/ # Страницы навигации (LoginPage, GamePage, StatisticsPage и др.)
-│ └─ Windows/ # При необходимости (например, окно настроек)
-├─ App.xaml # Ресурсы приложения, стили
-├─ MainWindow.xaml # Главное окно с Frame для навигации
-└─ Game2048.csproj # Файл проекта
-
+```
+  Game2048/
+  ├─ Assets/ # Ресурсы интерфейса (иконки, изображения)
+  ├─ Commands/ # Реализации команд (RelayCommand, NavigationCommand и т.д.)
+  │ └─ Base/ # Базовый класс BaseCommand
+  ├─ Converters/ # Конвертеры для привязки в XAML
+  ├─ Models/ # Модели предметной области (GameBoard, Tile, UserProfile и др.)
+  ├─ Repositories/ # Слой доступа к данным (UserRepository для MongoDB)
+  ├─ ViewModels/ # Модели представления (MenuViewModel, GameViewModel и др.)
+  │ └─ Base/ # Базовый ViewModel с INotifyPropertyChanged
+  ├─ Views/ # XAML-страницы и окна (Pages/, Windows/)
+  │ ├─ Pages/ # Страницы навигации (LoginPage, GamePage, StatisticsPage и др.)
+  │ └─ Windows/ # При необходимости (например, окно настроек)
+  ├─ App.xaml # Ресурсы приложения, стили
+  ├─ MainWindow.xaml # Главное окно с Frame для навигации
+  └─ Game2048.csproj # Файл проекта
+```
 ---
 
 ## Инструкция по сборке и запуску
