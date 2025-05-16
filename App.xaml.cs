@@ -9,6 +9,13 @@ namespace Game2048
     /// </summary>
     public partial class App : Application
     {
+        public Views.Windows.MainWindow MainWindow
+        {
+            get => default;
+            set
+            {
+            }
+        }
     }
 
 }

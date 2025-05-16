@@ -17,7 +17,6 @@
     </Page.DataContext>
 
     <Page.Resources>
-        <cnv:IntArrayToObservableCollectionConverter x:Key="IntToCollectionConverter" />
         <cnv:ValueToColorConverter x:Key="ValueToColorConverter" />
 
         <DataTemplate x:Key="CellTemplate">

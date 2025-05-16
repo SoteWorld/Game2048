@@ -12,5 +12,45 @@ namespace Game2048.Views.Windows
 
         // Экспонируем Frame как публичное свойство
         public Frame MainFrame => MainWindowFrame;
+
+        public View.Pages.GamePage GamePage
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public View.Pages.MenuPage MenuPage
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public View.Pages.StatisticsPage StatisticsPage
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public View.Pages.LoginPage LoginPage
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public View.Pages.RegistrationPage RegistrationPage
+        {
+            get => default;
+            set
+            {
+            }
+        }
     }
 }
